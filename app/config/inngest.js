@@ -1,7 +1,7 @@
 import { Inngest } from "inngest";
 import { connect } from "mongoose";
 import { connectDB } from "./db";
-import { User } from "@clerk/nextjs/dist/types/server";
+import user from "../models/User";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "shopora-next" });
@@ -25,7 +25,7 @@ export const syncUserCreation = inngest.createFunction(
     };
 
     await connectDB();
-    await User.create(userData);
+    await user.create(userData);
   }
 );
 
@@ -47,7 +47,7 @@ export const sycnUserUpdate = inngest.createFunction(
       imageUrl: image_url,
     };
     await connectDB();
-    await User.findByIdAndUpdate(id, userData);
+    await user.findByIdAndUpdate(id, userData);
   }
 );
 
@@ -69,6 +69,6 @@ export const syncUserDelete = inngest.createFunction(
     //   imageUrl: image_url,
     // };
     await connectDB();
-    await User.findByIdAndDelete(id);
+    await user.findByIdAndDelete(id);
   }
 )

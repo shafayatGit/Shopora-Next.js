@@ -1,4 +1,11 @@
+// lib/mongoose.js
 import mongoose from "mongoose";
+
+const MONGODB_URI = process.env.MONGODB_URI; // stored in .env.local
+
+if (!MONGODB_URI) {
+  throw new Error("Please define the MONGODB_URI environment variable in .env.local");
+}
 
 let cached = global.mongoose;
 
@@ -10,15 +17,13 @@ export async function connectDB() {
   if (cached.conn) {
     return cached.conn;
   }
+
   if (!cached.promise) {
-    const opts = {
-      bufferCommand: false,
-    };
     cached.promise = mongoose
-      .connect(`${process.env.MONGODB_URI}/shopora`, opts)
-      .then((mongoose) => {
-        return mongoose;
-      });
+      .connect(MONGODB_URI, {
+        dbName: "shopora", // change to your DB name
+      })
+      .then((mongoose) => mongoose);
   }
   cached.conn = await cached.promise;
   return cached.conn;

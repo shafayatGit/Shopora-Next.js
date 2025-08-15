@@ -13,12 +13,12 @@ export const useAppContext = () => {
 export const AppContextProvider = (props) => {
   const currency = process.env.NEXT_PUBLIC_CURRENCY;
   const router = useRouter();
-  const {user} = useUser();
-//   console.log(user.u.imageUrl);
+  const { user } = useUser();
+  // console.log(user.publicMetadata);
 
   const [products, setProducts] = useState([]);
   const [userData, setUserData] = useState(false);
-  const [isSeller, setIsSeller] = useState(true);
+  const [isSeller, setIsSeller] = useState(false);
   const [cartItems, setCartItems] = useState({});
 
   const fetchProductData = async () => {
@@ -26,7 +26,15 @@ export const AppContextProvider = (props) => {
   };
 
   const fetchUserData = async () => {
-    setUserData(userDummyData);
+    // console.log(user.publicMetadata)
+    try {
+      if (user.publicMetadata.role === "seller") {
+        setIsSeller(true);
+      }
+      setUserData(userDummyData);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const addToCart = async (itemId) => {
@@ -75,8 +83,10 @@ export const AppContextProvider = (props) => {
   }, []);
 
   useEffect(() => {
-    fetchUserData();
-  }, []);
+    if (user) {
+      fetchUserData();
+    }
+  }, [user]);
 
   const value = {
     user,

@@ -1,7 +1,8 @@
 import { Inngest } from "inngest";
 import { connect } from "mongoose";
 import { connectDB } from "./db";
-import user from "../models/User";
+// import user from "../models/User";
+import User from "../models/User";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "shopora-next" });
@@ -25,7 +26,8 @@ export const syncUserCreation = inngest.createFunction(
     };
 
     await connectDB();
-    await user.create(userData);
+    const user = await User.create(userData);
+    console.log(user)
   }
 );
 
@@ -47,13 +49,13 @@ export const sycnUserUpdate = inngest.createFunction(
       imageUrl: image_url,
     };
     await connectDB();
-    await user.findByIdAndUpdate(id, userData);
+    await User.findByIdAndUpdate(id, userData);
   }
 );
 
 // Inngest function to delete user from the database
 export const syncUserDelete = inngest.createFunction(
-    {
+  {
     id: "delete-user-from-clerk",
   },
   {
@@ -69,6 +71,6 @@ export const syncUserDelete = inngest.createFunction(
     //   imageUrl: image_url,
     // };
     await connectDB();
-    await user.findByIdAndDelete(id);
+    await User.findByIdAndDelete(id);
   }
-)
+);

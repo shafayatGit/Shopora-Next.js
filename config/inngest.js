@@ -1,13 +1,13 @@
 import { Inngest } from "inngest";
-import { connect } from "mongoose";
-import { connectDB } from "./db";
-// import user from "../models/User";
-import User from "../models/User";
+import mongoose from "mongoose";
+
+import connectDB from "./db";
+import UserModel from "../models/User";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "shopora-next" });
 
-// Inngest function to save our user data to database
+// Inngest function to save our user data into database
 export const syncUserCreation = inngest.createFunction(
   {
     id: "sync-user-from-clerk",
@@ -26,13 +26,12 @@ export const syncUserCreation = inngest.createFunction(
     };
 
     await connectDB();
-    const user = await User.create(userData);
-    console.log(user)
+    await UserModel.create(userData);
   }
 );
 
-// Inngest function to update user data
-export const sycnUserUpdate = inngest.createFunction(
+// // Inngest function to update user data
+export const syncUserUpdate = inngest.createFunction(
   {
     id: "update-user-from-clerk",
   },
@@ -49,11 +48,11 @@ export const sycnUserUpdate = inngest.createFunction(
       imageUrl: image_url,
     };
     await connectDB();
-    await User.findByIdAndUpdate(id, userData);
+    await UserModel.findByIdAndUpdate(id, userData);
   }
 );
 
-// Inngest function to delete user from the database
+// // Inngest function to delete user from the database
 export const syncUserDelete = inngest.createFunction(
   {
     id: "delete-user-from-clerk",
@@ -71,6 +70,6 @@ export const syncUserDelete = inngest.createFunction(
     //   imageUrl: image_url,
     // };
     await connectDB();
-    await User.findByIdAndDelete(id);
+    await UserModel.findByIdAndDelete(id);
   }
 );
